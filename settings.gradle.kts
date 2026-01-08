@@ -3,6 +3,13 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url = uri("https://maven.pkg.github.com/MorpheApp/registry")
+            credentials {
+                username = settings.providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
+                password = settings.providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 
