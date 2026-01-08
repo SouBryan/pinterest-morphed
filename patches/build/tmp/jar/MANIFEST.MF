@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Name: Morphe Patches template
+Description: Patches template for Morphe
+Version: 1.0.0
+Timestamp: 1767889904252
+Source: git@github.com:MorpheApp/morphe-patches-template.git
+Author: Morphe
+Contact: contact@morphe.software
+Website: https://morphe.software
+License: Additional conditions under GPL section 7 apply: attribution an
+ d project name restrictions. See LICENSE file.
+
