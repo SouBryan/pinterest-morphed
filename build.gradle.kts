@@ -1,15 +1,3 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/MorpheApp/registry")
-            credentials {
-                username = findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
-                password = findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-}
+// This file was intentionally left empty.
+/ All repositories and plugins have been moved to settings.gradle.kts
+/ to avoid the 'FAIL_ON_PROJECT_REPOS' error.
