@@ -1,3 +1,15 @@
-plugins {
-    base // This adds the 'clean' task and other lifecycle hooks to the root
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/MorpheApp/registry")
+            credentials {
+                username = findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
