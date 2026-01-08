@@ -1,4 +1,3 @@
 plugins {
-    base
-    `maven-publish` // Isso adiciona a task 'publish' que o semantic-release procura
+    base // This adds the 'clean' task and other lifecycle hooks to the root
 }
