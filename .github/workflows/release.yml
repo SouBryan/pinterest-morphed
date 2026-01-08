@@ -10,8 +10,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-      id-token: write
-      attestations: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,8 +25,8 @@ jobs:
       - name: Build
         run: ./gradlew build clean
         env:
-          GPR_USER: ${{ github.actor }}
-          GPR_KEY: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ secrets.GPR_USER }}
+          GITHUB_TOKEN: ${{ secrets.GPR_KEY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
