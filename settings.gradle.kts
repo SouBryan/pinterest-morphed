@@ -1,3 +1,15 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id("app.morphe.patches") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -14,3 +26,6 @@ dependencyResolutionManagement {
         }
     }
 }
+
+rootProject.name = "pinterest-morphed"
+include(":patches", ":extensions")
