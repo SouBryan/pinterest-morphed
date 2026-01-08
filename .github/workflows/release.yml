@@ -25,11 +25,10 @@ jobs:
           java-version: '17'
 
       - name: Build
+        run: ./gradlew clean build --refresh-dependencies
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GPR_USER: ${{ secrets.GPR_USER }}
           GPR_KEY: ${{ secrets.GPR_KEY }}
-        run: npx semantic-release
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
