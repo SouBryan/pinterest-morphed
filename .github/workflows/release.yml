@@ -23,10 +23,10 @@ jobs:
           java-version: '17'
 
       - name: Build
-        run: ./gradlew build clean
+        run: ./gradlew clean build --refresh-dependencies
         env:
-          GITHUB_ACTOR: ${{ secrets.GPR_USER }}
-          GITHUB_TOKEN: ${{ secrets.GPR_KEY }}
+          GPR_USER: ${{ secrets.GPR_USER }}
+          GPR_KEY: ${{ secrets.GPR_KEY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
