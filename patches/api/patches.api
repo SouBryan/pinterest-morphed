@@ -1,7 +1,8 @@
-public final class app/morphe/patches/ExamplePatchKt {
+public final class app/morphe/patches/example/ExamplePatchKt {
 public static final fun getExamplePatch ()Lapp/morphe/patcher/patch/BytecodePatch;
 }
 
 public final class app/morphe/patches/pinterest/PinterestNoAdsPatchKt {
 public static final fun getPinterestNoAdsPatch ()Lapp/morphe/patcher/patch/BytecodePatch;
 }
+
