@@ -11,7 +11,3 @@ patches {
         license = "Additional conditions under GPL section 7 apply: attribution and project name restrictions. See LICENSE file."
     }
 }
-
-apiValidation {
-    validationDisabled = true
-}

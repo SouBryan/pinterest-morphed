@@ -2,11 +2,11 @@
   "name": "Pinterest Pro",
   "package": "com.pinterest",
   "version": "14.0.0",
-  "description": "Pinterest Pro: Sem Anúncios, Sem Trackers, Sem Lixo Digital",
+  "description": "Pinterest Morphed: No Ads/Trackers",
   "features": [
-    "Bloqueia Ads e banners",
-    "Desativa Firebase Analytics e Bugsnag",
-    "Desativa AppsFlyer logging",
-    "Redireciona domínios de tracking para localhost"
+    "Blocks Ads and banners",
+    "Disables Firebase Analytics and Bugsnag",
+    "Disables AppsFlyer logging",
+    "Redirects tracking domains to localhost"
   ]
 }

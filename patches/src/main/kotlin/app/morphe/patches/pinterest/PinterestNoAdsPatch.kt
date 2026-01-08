@@ -18,7 +18,7 @@ import com.android.tools.smali.dexlib2.util.MethodUtil
 
 @Suppress("unused")
 val pinterestNoAdsPatch = bytecodePatch(
-    name = "Pinterest Pro: No Ads/Trackers",
+    name = "Pinterest Morphed: No Ads/Trackers",
     description = "Blocks Pinterest ads, analytics, and crash reporters while redirecting tracker hosts to localhost.",
 ) {
     compatibleWith(
