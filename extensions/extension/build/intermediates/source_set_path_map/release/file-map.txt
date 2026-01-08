@@ -1,0 +1,7 @@
+app.revanced.extension-pngs-0 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\build\generated\res\pngs\release
+app.revanced.extension-resValues-1 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\build\generated\res\resValues\release
+app.revanced.extension-packageReleaseResources-2 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+app.revanced.extension-packageReleaseResources-3 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+app.revanced.extension-merged_res-4 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\build\intermediates\merged_res\release
+app.revanced.extension-main-5 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\res
+app.revanced.extension-release-6 C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\release\res

@@ -1,0 +1,19 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml:1:1-12
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml:1:1-12
+	package
+		INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+application
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml reason: application injection requested
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+	android:extractNativeLibs
+		INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+uses-sdk
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\Bryan\Documents\Projetos\pinterest patch\morphe-patches-template\extensions\extension\src\main\AndroidManifest.xml
