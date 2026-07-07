@@ -7,37 +7,49 @@ import app.soubryan.patches.pinterest.shared.Constants.COMPATIBILITY_PINTEREST
 import com.android.tools.smali.dexlib2.AccessFlags
 
 /**
- * Matches `com.pinterest.engage.GoogleEngageWorker.createWork()` — the RxWorker
- * override that Pinterest schedules once per day to hand user-facing content
- * over to Google's Engage service (Discover, Assistant, Play Store, ...).
+ * Matches `com.pinterest.engage.GoogleEngageWorker.createWork()` — the
+ * RxWorker override that Pinterest schedules once per day to hand
+ * user-facing content over to Google's Engage service (Discover,
+ * Assistant, Play Store, ...).
  *
- * The Kotlin/Java method name has been mangled by R8 to a single letter, so
- * we fingerprint on class + shape:
- *   * `PUBLIC FINAL` non-static
- *   * no parameters
- *   * returns `io.reactivex.Single` (mangled to `Ljx2/v;` in this build)
+ * The Pinterest-owned class name is preserved by R8, but the method name
+ * is mangled to a single letter and the return type (RxJava's `Single`)
+ * changes package name between Pinterest releases (`jx2/v` on 14.25,
+ * something else on 14.24 and 14.26). We identify the target by
  *
- * The Single type is anchored to the 14.25.0 mapping (`jx2/v`) — if a future
- * Pinterest release reshuffles RxJava's mangling, the fingerprint fails
- * cleanly and the patch is skipped instead of applying incorrectly.
+ *   * `definingClass` (stable Pinterest-owned name)
+ *   * `PUBLIC` non-static, no parameters
+ *   * `custom` predicate that only accepts a method whose return type is
+ *     a reference type — RxJava's `Single` is always an object, never a
+ *     primitive or void
+ *
+ * That is enough to uniquely nail the abstract override.
  */
 internal object GoogleEngageWorkerCreateWorkFingerprint : Fingerprint(
     definingClass = "Lcom/pinterest/engage/GoogleEngageWorker;",
-    returnType = "Ljx2/v;",
-    parameters = emptyList(),
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    parameters = emptyList(),
+    custom = { method, _ ->
+        val returnType = method.returnType
+        returnType.startsWith("L") && returnType.endsWith(";")
+    },
 )
 
 /**
- * Neutralises the Google Engage RxWorker even though it is still scheduled by
- * `ReleaseHiltApplication.onCreate` and the (now removed) broadcast receiver.
+ * Neutralises the Google Engage RxWorker even though it is still scheduled
+ * from `ReleaseHiltApplication.onCreate` (and from the removed broadcast
+ * receiver).
  *
- * The rewritten `createWork()` simply returns `Single.just(Result.success())`,
- * which:
- *   * makes the WorkManager mark the run as successful
- *   * skips every network call the worker would otherwise perform
- *   * keeps the periodic schedule alive (harmlessly) so the app doesn't spam
- *     retries with backoff
+ * The rewritten `createWork()` simply returns `null`. WorkManager treats
+ * this as a wrapped `NullPointerException` and marks the run as a
+ * retryable failure. Because the schedule is periodic with exponential
+ * back-off, the worker quickly settles into "one attempt every few hours,
+ * always failing" — no data ever reaches Google Engage.
+ *
+ * The alternative (returning `Single.just(Result.success())`) requires
+ * hard-coding the mangled RxJava `Single` class, which changes name
+ * between Pinterest builds. Returning `null` is bytecode-agnostic and
+ * therefore identical on every 14.2x release.
  *
  * Requires [disableGoogleEngagePatch] (resource) to be applied as well so
  * the `<receiver>` doesn't re-schedule one-off runs on login/logout.
@@ -45,7 +57,7 @@ internal object GoogleEngageWorkerCreateWorkFingerprint : Fingerprint(
 @Suppress("unused")
 val disableGoogleEngageWorkerPatch = bytecodePatch(
     name = "Disable Google Engage worker",
-    description = "Rewrites GoogleEngageWorker.createWork() to a no-op that returns Result.success() so no content recommendations are ever published to Google.",
+    description = "Rewrites GoogleEngageWorker.createWork() to return null so WorkManager fails the periodic job and no content recommendations are ever published to Google.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_PINTEREST)
@@ -54,10 +66,7 @@ val disableGoogleEngageWorkerPatch = bytecodePatch(
         GoogleEngageWorkerCreateWorkFingerprint.method.addInstructions(
             0,
             """
-                invoke-static {}, Landroidx/work/ListenableWorker${'$'}Result;->success()Landroidx/work/ListenableWorker${'$'}Result;
-                move-result-object v0
-                invoke-static { v0 }, Ljx2/v;->g(Ljava/lang/Object;)Ljx2/v;
-                move-result-object v0
+                const/4 v0, 0x0
                 return-object v0
             """,
         )

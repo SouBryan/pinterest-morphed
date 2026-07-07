@@ -9,37 +9,32 @@ import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
 
 /**
- * The Gson `@SerializedName` annotation is renamed by R8 to a single-letter
- * class inside the `dp` package. In every 14.2x build inspected so far it
- * lands on `Ldp/b;`. The bare `value()` string element is preserved because
- * Gson reads it via reflection at runtime.
- */
-private const val GSON_SERIALIZED_NAME_ANNOTATION = "Ldp/b;"
-
-/**
- * Predicate that returns `true` when a class has any field annotated with
- * `@dp.b("<jsonName>")`.
+ * Predicate that returns `true` when a class has any field carrying a Gson
+ * `@SerializedName(<jsonName>)` annotation.
  *
- * Used as a `custom` filter on fingerprints so we can restrict matches to
- * Pinterest API model classes that carry a specific JSON field.
+ * The Gson annotation class itself (`com.google.gson.annotations.SerializedName`)
+ * is mangled by R8 — on 14.25 it lands as `Ldp/b;`, on 14.26 it may land
+ * somewhere else. Instead of hard-coding the mangled class, we look at the
+ * annotation's `value` element (Gson reads it via reflection, so its name
+ * `"value"` is preserved) and match on the string constant. That makes the
+ * predicate immune to further R8 re-shuffles.
  */
-private fun classHasFieldNamed(jsonName: String): (Any, com.android.tools.smali.dexlib2.iface.ClassDef) -> Boolean =
+private fun classHasSerializedFieldNamed(jsonName: String): (Any, com.android.tools.smali.dexlib2.iface.ClassDef) -> Boolean =
     { _, classDef ->
         classDef.fields.any { field ->
             field.annotations.any { anno ->
-                anno.type == GSON_SERIALIZED_NAME_ANNOTATION &&
-                    anno.elements.any { element ->
-                        element.name == "value" &&
-                            (element.value as? StringEncodedValue)?.value == jsonName
-                    }
+                anno.elements.any { element ->
+                    element.name == "value" &&
+                        (element.value as? StringEncodedValue)?.value == jsonName
+                }
             }
         }
     }
 
 /**
  * Matches trivial boolean getters (`iget-boolean` immediately followed by
- * `return`) on any class that carries a field annotated
- * `@dp.b("is_promoted")`.
+ * `return`) on any class that carries a field annotated with any Gson
+ * `@SerializedName("is_promoted")`.
  *
  * The fingerprint intentionally does NOT nail down the method name — R8
  * mangles every getter in the Pinterest API models to a single letter and
@@ -47,10 +42,13 @@ private fun classHasFieldNamed(jsonName: String): (Any, com.android.tools.smali.
  *
  *   * exact bytecode shape (2 opcodes only, no branching)
  *   * exact signature (`public final boolean noArgs()`)
- *   * exact class shape (must have `@dp.b("is_promoted")` on some field)
+ *   * exact class shape (has an `@SerializedName("is_promoted")` field,
+ *     detected structurally without depending on the mangled annotation
+ *     class name)
  *
- * That combination uniquely identifies the `getIsPromoted()` getter on each
- * Pinterest model that ships an `is_promoted` field (`ue`, `x5`, `qj`, `o7`, ...).
+ * That combination uniquely identifies the `getIsPromoted()` getter on
+ * every Pinterest model that ships an `is_promoted` field (`ue`, `x5`,
+ * `qj`, `o7`, ...).
  */
 internal object IsPromotedGetterFingerprint : Fingerprint(
     returnType = "Z",
@@ -64,7 +62,7 @@ internal object IsPromotedGetterFingerprint : Fingerprint(
             (instructions[1].opcode == Opcode.RETURN ||
                 instructions[1].opcode == Opcode.RETURN_WIDE)
 
-        shapeMatches && classHasFieldNamed("is_promoted")(method, classDef)
+        shapeMatches && classHasSerializedFieldNamed("is_promoted")(method, classDef)
     },
 )
 
