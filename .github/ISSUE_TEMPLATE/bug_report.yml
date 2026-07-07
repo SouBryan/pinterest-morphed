@@ -1,0 +1,60 @@
+name: 🐞 Bug report
+description: Report a bug or an issue.
+title: "bug: "
+labels: ["Bug report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Pinterest Morphed bug report
+
+        Before creating a new bug report, please keep the following in mind:
+
+        - **Do not submit a duplicate bug report**: Search for existing bug reports [here](https://github.com/SouBryan/pinterest-morphed/issues?q=label%3A%22Bug+report%22).
+        - **Include the Pinterest version** (Settings → About) and the patched bundle version.
+  - type: input
+    attributes:
+      label: Pinterest version
+      description: e.g. 14.25.0
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Pinterest Morphed release
+      description: The tag or version of these patches you applied (e.g. v1.0.0).
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Bug description
+      description: |
+        - Describe your bug in detail
+        - Add steps to reproduce the bug if possible (Step 1. ... Step 2. ...)
+        - Add images and videos if possible
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Error logs
+      description: Exceptions can be captured by running `adb logcat | grep -i "pinterest\|AndroidRuntime"` in a shell.
+      render: shell
+  - type: textarea
+    attributes:
+      label: Solution
+      description: If applicable, add a possible solution to the bug.
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add additional context here.
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: Your bug report will be closed if you don't follow the checklist below.
+      options:
+        - label: I have checked all open and closed bug reports and this is not a duplicate.
+          required: true
+        - label: I have chosen an appropriate title.
+          required: true
+        - label: All requested information has been provided properly.
+          required: true
