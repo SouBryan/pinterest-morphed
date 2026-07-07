@@ -83,34 +83,29 @@ cleanup.
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0](https://github.com/SouBryan/pinterest-morphed/releases/tag/v1.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
+<details open>
+<summary>📦 Pinterest&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
+<br>
 
-<!-- Do not modify this section by hand. The patch list is generated when release.yml creates a new release.
+**🎯 Supported versions:**
 
-     If you wish for the patches list to be collapsed, then remove the word 'EXPANDED' from the comment tag above.
+| 🧪&nbsp;14.26.0 | 14.25.0 | 🧪&nbsp;14.24.0 |
+| :---: | :---: | :---: |
 
-     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END
-     comment blocks entirely. -->
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Android Privacy Sandbox Ad Services](#disable-android-privacy-sandbox-ad-services) | Removes the AD_SERVICES_CONFIG property so Android Privacy Sandbox ad APIs (Topics, Attribution Reporting, Custom Audiences) are not opted into. |  |
+| [Disable AppsFlyer tracking](#disable-appsflyer-tracking) | Neutralises the AppsFlyer attribution / tracking SDK. init() becomes a no-op and isStopped() always returns true, so no events, installs, uninstalls or attribution data are transmitted. |  |
+| [Disable Bugsnag crash tracking](#disable-bugsnag-crash-tracking) | Removes the Bugsnag API key metadata so the crash reporting SDK cannot initialize or upload telemetry. |  |
+| [Disable Google Ads SDK](#disable-google-ads-sdk) | Removes the Google Mobile Ads (AdMob) initialization metadata so the SDK never starts. |  |
+| [Disable Google Engage integration](#disable-google-engage-integration) | Removes the Google Engage broadcast receiver so Pinterest cannot publish content recommendations back to Google (Discover, Assistant, Play Store, etc.). |  |
+| [Disable Google Engage worker](#disable-google-engage-worker) | Rewrites GoogleEngageWorker.createWork() to a no-op that returns Result.success() so no content recommendations are ever published to Google. |  |
+| [Hide promoted pins](#hide-promoted-pins) | Overrides every `isPromoted` getter on the Pinterest pin/story models to return false, so ad chrome, ad beacons and click-out CTAs are never rendered or fired. |  |
+| [Opt out of Google Analytics](#opt-out-of-google-analytics) | Sets the default Google Analytics consent flags to false so the Firebase Measurement SDK does not collect analytics, ad data or personalization signals. |  |
+| [Remove Advertising ID permission](#remove-advertising-id-permission) | Strips the com.google.android.gms.permission.AD_ID permission so any residual SDK cannot read the device's Google Advertising ID. |  |
 
-Currently shipping **9 patches** across two categories:
-
-### 🚫 Ads
-
-| Patch | Type | What it does |
-|---|---|---|
-| **Hide promoted pins** | bytecode | Rewrites every `isPromoted` getter across every Pinterest API model (Pin, Story, PinnableStory, …) so no pin is ever treated as a promoted slot. Kills the "Promoted" badge, the ad-impression beacons, ad-slot insertion in the feed, and the click-out CTA. |
-| **Disable Google Ads SDK** | resource | Removes the AdMob `APPLICATION_ID` metadata from the manifest so the Google Mobile Ads SDK aborts initialization silently. |
-| **Disable Android Privacy Sandbox Ad Services** | resource | Removes the `AD_SERVICES_CONFIG` property so the app is not opted into Android 13+ Privacy Sandbox APIs (Topics, Attribution Reporting, Custom Audiences). |
-
-### 🕵️ Tracking / analytics
-
-| Patch | Type | What it does |
-|---|---|---|
-| **Disable AppsFlyer tracking** | bytecode | Hooks `AppsFlyerLib.init()` to no-op and `AppsFlyerLib.isStopped()` to always return `true`. No install attribution, no in-app events, no uninstall tokens, no deep-link resolution. |
-| **Disable Bugsnag crash tracking** | resource | Strips the Bugsnag `API_KEY` metadata so the crash reporting SDK cannot initialize or upload telemetry (the native root-detection library still loads but stays inert). |
-| **Disable Google Engage integration** | resource | Removes the `GoogleEngageBroadcastReceiver` and its ENV metadata so the app cannot publish content recommendations back to Google (Discover, Assistant, Play Store surfaces). |
-| **Disable Google Engage worker** | bytecode | Also rewrites the periodic `GoogleEngageWorker.createWork()` to `Single.just(Result.success())` — no data leaves the device even if the worker is scheduled again by another code path. |
-| **Opt out of Google Analytics** | resource | Flips the four `google_analytics_default_allow_*` consent flags to `false` so the Firebase Measurement / GA4 SDK never collects analytics, ad data, ad-user data or personalization signals. |
-| **Remove Advertising ID permission** | resource | Drops the `com.google.android.gms.permission.AD_ID` permission so any residual SDK that reads the Google Advertising ID gets a zeroed-out, opted-out value. |
+</details>
 
 <!-- PATCHES_END -->
 
