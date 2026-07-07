@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0...v1.1.0) (2026-07-07)
+
+### ✨ New Features
+
+* add Sanitize sharing links + make cross-version patches resilient ([0989429](https://github.com/SouBryan/pinterest-morphed/commit/0989429e1e85dc021c8985cf2affe934fe283207))
+
 ## 1.0.0 (2026-07-07)
 
 ### ✨ New Features
