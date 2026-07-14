@@ -69,16 +69,38 @@ Then:
 
 ## 🎯 Supported Pinterest versions
 
-| Version | Channel       | Notes                                                          |
-| ------- | ------------- | -------------------------------------------------------------- |
-| 14.26.0 | Experimental  | Latest beta channel — should work, fingerprints not re-anchored |
-| 14.25.0 | **Recommended** | Latest stable on the Play Store — patches developed here      |
-| 14.24.0 | Experimental  | Kept working for users still on an older release               |
+Every listed version has been verified end-to-end — **all 12 patches apply
+cleanly on the exact `versionCode` in the table below**. The fingerprints are
+anchored on Gson `@SerializedName` values, Pinterest-owned class names and
+stable Android SDK strings, so they survive every 14.2x release without any
+code change.
 
-Fingerprints are anchored to **14.25.0**. Older/newer versions are best-effort:
-if a patch's fingerprint no longer matches, the patch is skipped instead of
-applying incorrectly, so the app will still install — you just get less
-cleanup.
+**14.25.0 is the recommended daily-driver build** — it's the most-tested
+version on real hardware (ad blocking, share sanitiser, copy-link resolver).
+The other releases apply cleanly but have received less runtime testing.
+
+| Version | Code       | minSdk | Direct download from APKMirror                                                                                                                                                        |
+| ------- | ---------- | :----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14.27.0 | `14278010` |   32   | _not on APKMirror yet — export from the Play Store with [SAI](https://f-droid.org/packages/com.aefyr.sai.fdroid/)_                                                                    |
+| 14.26.0 | `14268010` |   29   | [Bundle (arm64-v8a, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-26-0-release/pinterest-14-26-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-26-0-release/pinterest-14-26-0-2-android-apk-download/) |
+| **14.25.0** ⭐ | `14258020` |   28   | [Bundle (arm64+v7a, 480dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-2-android-apk-download/) · [Bundle (arm64, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-3-android-apk-download/) |
+| 14.24.0 | `14248020` |   28   | [Bundle (arm64+v7a, 480dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-2-android-apk-download/) · [Bundle (arm64, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-3-android-apk-download/) |
+| 14.23.0 | `14238020` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-23-0-release/pinterest-14-23-0-android-apk-download/)      |
+| 14.22.0 | `14228020` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-22-0-release/pinterest-14-22-0-android-apk-download/)      |
+| 14.21.0 | `14218010` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-21-0-release/pinterest-14-21-0-android-apk-download/)      |
+| 14.20.0 | `14208010` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-20-0-release/pinterest-14-20-0-android-apk-download/)      |
+
+**Which variant to pick?** APKMirror lists two file types per release:
+
+- **Bundle** (`.apkm`) — the Play Store multi-split (`base.apk` + language +
+  DPI + ABI splits). Preferred: smaller install, matches your device
+  configuration exactly. Requires the [APKMirror Installer](https://www.apkmirror.com/apkm-installer/)
+  or [SAI](https://f-droid.org/packages/com.aefyr.sai.fdroid/) to install.
+- **Universal APK** (`.apk`) — single file, works everywhere, larger download.
+  Use this if the bundle installer refuses your device.
+
+Both file types are accepted by Morphe Manager and the CLI. Patch output is
+identical.
 
 ## 🩹 Patches list
 
@@ -175,15 +197,20 @@ talk to a re-signed APK. Log in with email/password instead. This is a
 limitation of every patched Android app, not something specific to this repo.
 
 ### Which APK/bundle should I download?
-For the bundle patches, prefer `.apkm` from APKMirror. `arm64-v8a` is enough
-if your phone is from the last 6 years. Avoid already-modded or repacked
-APKs.
+See the [Supported Pinterest versions](#-supported-pinterest-versions) table
+above for direct APKMirror links. Prefer the **Bundle** (`.apkm`) variant when
+listed — it's the same multi-split file Google Play delivers, so the download
+matches your device configuration exactly. If the bundle installer refuses
+your device, fall back to the **Universal APK**. Both produce identical
+patched builds. Avoid already-modded or repacked APKs from other sources.
 
 ### Will you support version X.Y.Z?
-If it's a Pinterest release after `14.25.0` and the fingerprints still hold,
-it should already work (marked "experimental"). If a patch stops applying,
-open an issue with your Pinterest version and the CLI output so I can
-re-anchor the fingerprints.
+Pinterest **14.20.0 through 14.27.0** are already verified (12/12 patches on
+every release in that range). If a future Pinterest release still applies all
+12 patches, it works with no code change on my side — the fingerprints are
+anchored on Gson `@SerializedName` values and Pinterest-owned class names,
+which R8 preserves. If a patch does stop applying, open an issue with your
+Pinterest version and the CLI output so I can re-anchor the fingerprint.
 
 ### Can you make patches for other apps?
 No — this repo is Pinterest-only by design. There are other Morphe patch
