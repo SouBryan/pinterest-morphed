@@ -1,3 +1,9 @@
+## [1.0.0-dev.4](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.3...v1.0.0-dev.4) (2026-07-14)
+
+### 🐛 Bug Fixes
+
+* cover shopping ads and ad_data in HidePromotedPinsPatch ([c8a55c1](https://github.com/SouBryan/pinterest-morphed/commit/c8a55c1fade7eba7adca23b83010ca4989642b3a))
+
 ## [1.0.0-dev.3](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2026-07-14)
 
 ### ✨ New Features
