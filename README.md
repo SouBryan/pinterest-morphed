@@ -83,9 +83,9 @@ cleanup.
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.0.0-dev.4](https://github.com/SouBryan/pinterest-morphed/releases/tag/v1.0.0-dev.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
+> **[v1.0.0-dev.5](https://github.com/SouBryan/pinterest-morphed/releases/tag/v1.0.0-dev.5)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;12 patches total
 <details open>
-<summary>📦 Pinterest&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
+<summary>📦 Pinterest&nbsp;&nbsp;•&nbsp;&nbsp;12 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -101,6 +101,7 @@ cleanup.
 | [Disable Google Ads SDK](#disable-google-ads-sdk) | Removes the Google Mobile Ads (AdMob) initialization metadata so the SDK never starts. |  |
 | [Disable Google Engage integration](#disable-google-engage-integration) | Removes the Google Engage broadcast receiver so Pinterest cannot publish content recommendations back to Google (Discover, Assistant, Play Store, etc.). |  |
 | [Disable Google Engage worker](#disable-google-engage-worker) | Rewrites GoogleEngageWorker.createWork() to return null so WorkManager fails the periodic job and no content recommendations are ever published to Google. |  |
+| [Hide ad views](#hide-ad-views) | Collapses Pinterest's ad-specific views (TextAdView, promoted closeup action bars, board sponsor headers, …) to zero-size on construction, so ad chrome never draws even if the feed adapter tries to render one. |  |
 | [Hide promoted pins](#hide-promoted-pins) | Neutralises every ad-indicator field on the Pinterest pin/story models (is_promoted, promoted_is_*, is_native, ad_data, ...) so Promoted Pins, shopping-carousel ads, native-content ads and click-out CTAs are never rendered or fired. |  |
 | [Opt out of Google Analytics](#opt-out-of-google-analytics) | Sets the default Google Analytics consent flags to false so the Firebase Measurement SDK does not collect analytics, ad data or personalization signals. |  |
 | [Remove Advertising ID permission](#remove-advertising-id-permission) | Strips the com.google.android.gms.permission.AD_ID permission so any residual SDK cannot read the device's Google Advertising ID. |  |
