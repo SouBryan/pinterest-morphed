@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "patches": [
     {
       "name": "Disable Android Privacy Sandbox Ad Services",
@@ -244,7 +244,7 @@
     },
     {
       "name": "Hide promoted pins",
-      "description": "Overrides every `isPromoted` getter on the Pinterest pin/story models to return false, so ad chrome, ad beacons and click-out CTAs are never rendered or fired.",
+      "description": "Neutralises every ad-indicator field on the Pinterest pin/story models (is_promoted, promoted_is_*, is_native, ad_data, ...) so Promoted Pins, shopping-carousel ads, native-content ads and click-out CTAs are never rendered or fired.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

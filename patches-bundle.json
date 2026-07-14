@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-07-14T04:42:28",
-  "description": "## [1.2.0](https://github.com/SouBryan/pinterest-morphed/compare/v1.1.0...v1.2.0) (2026-07-14)\n\n### ✨ New Features\n\n* resolve pin.it and pinterest.com/url_shortener short links to canonical pin URLs, and sanitize clipboard ([1e6b6e4](https://github.com/SouBryan/pinterest-morphed/commit/1e6b6e461300c3ae21000a427ba26f28086e62fa))",
-  "download_url": "https://github.com/SouBryan/pinterest-morphed/releases/download/v1.2.0/patches-1.2.0.mpp",
+  "created_at": "2026-07-14T05:10:16",
+  "description": "## [1.2.1](https://github.com/SouBryan/pinterest-morphed/compare/v1.2.0...v1.2.1) (2026-07-14)\n\n### 🐛 Bug Fixes\n\n* cover shopping ads and ad_data in HidePromotedPinsPatch ([2ac9672](https://github.com/SouBryan/pinterest-morphed/commit/2ac967234e54f113e693454fd6066cc5ba13e312))",
+  "download_url": "https://github.com/SouBryan/pinterest-morphed/releases/download/v1.2.1/patches-1.2.1.mpp",
   "signature_download_url": "",
-  "version": "1.2.0"
+  "version": "1.2.1"
 }
