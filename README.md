@@ -69,38 +69,26 @@ Then:
 
 ## 🎯 Supported Pinterest versions
 
+| Version | Channel         | Notes                                                                    |
+| ------- | --------------- | ------------------------------------------------------------------------ |
+| 14.27.0 | Stable          | Latest release — bumps `minSdk` to Android 12L (SDK 32)                  |
+| 14.26.0 | Stable          |                                                                          |
+| 14.25.0 | **Recommended** | Most-tested build on real hardware (ad-blocking, sanitisers, resolver)   |
+| 14.24.0 | Stable          |                                                                          |
+| 14.23.0 | Stable          |                                                                          |
+| 14.22.0 | Stable          |                                                                          |
+| 14.21.0 | Stable          |                                                                          |
+| 14.20.0 | Stable          | Oldest supported release                                                 |
+
 Every listed version has been verified end-to-end — **all 12 patches apply
-cleanly on the exact `versionCode` in the table below**. The fingerprints are
-anchored on Gson `@SerializedName` values, Pinterest-owned class names and
-stable Android SDK strings, so they survive every 14.2x release without any
-code change.
+cleanly on the exact `versionCode` declared in
+[`Constants.kt`](patches/src/main/kotlin/app/soubryan/patches/pinterest/shared/Constants.kt).**
+Fingerprints are anchored on Gson `@SerializedName` values, Pinterest-owned
+class names and stable Android SDK strings, so they survive every 14.2x
+release without any code change.
 
-**14.25.0 is the recommended daily-driver build** — it's the most-tested
-version on real hardware (ad blocking, share sanitiser, copy-link resolver).
-The other releases apply cleanly but have received less runtime testing.
-
-| Version | Code       | minSdk | Direct download from APKMirror                                                                                                                                                        |
-| ------- | ---------- | :----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 14.27.0 | `14278010` |   32   | _not on APKMirror yet — export from the Play Store with [SAI](https://f-droid.org/packages/com.aefyr.sai.fdroid/)_                                                                    |
-| 14.26.0 | `14268010` |   29   | [Bundle (arm64-v8a, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-26-0-release/pinterest-14-26-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-26-0-release/pinterest-14-26-0-2-android-apk-download/) |
-| **14.25.0** ⭐ | `14258020` |   28   | [Bundle (arm64+v7a, 480dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-2-android-apk-download/) · [Bundle (arm64, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-25-0-release/pinterest-14-25-0-3-android-apk-download/) |
-| 14.24.0 | `14248020` |   28   | [Bundle (arm64+v7a, 480dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-2-android-apk-download/) · [Bundle (arm64, 480–640dpi)](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-android-apk-download/) · [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-24-0-release/pinterest-14-24-0-3-android-apk-download/) |
-| 14.23.0 | `14238020` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-23-0-release/pinterest-14-23-0-android-apk-download/)      |
-| 14.22.0 | `14228020` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-22-0-release/pinterest-14-22-0-android-apk-download/)      |
-| 14.21.0 | `14218010` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-21-0-release/pinterest-14-21-0-android-apk-download/)      |
-| 14.20.0 | `14208010` |   28   | [Universal APK](https://www.apkmirror.com/apk/pinterest/pinterest-one-destination-for-a-world-of-inspiration/pinterest-14-20-0-release/pinterest-14-20-0-android-apk-download/)      |
-
-**Which variant to pick?** APKMirror lists two file types per release:
-
-- **Bundle** (`.apkm`) — the Play Store multi-split (`base.apk` + language +
-  DPI + ABI splits). Preferred: smaller install, matches your device
-  configuration exactly. Requires the [APKMirror Installer](https://www.apkmirror.com/apkm-installer/)
-  or [SAI](https://f-droid.org/packages/com.aefyr.sai.fdroid/) to install.
-- **Universal APK** (`.apk`) — single file, works everywhere, larger download.
-  Use this if the bundle installer refuses your device.
-
-Both file types are accepted by Morphe Manager and the CLI. Patch output is
-identical.
+Morphe Manager fetches the exact APKMirror download link for each version
+automatically — no need to hunt for it manually.
 
 ## 🩹 Patches list
 
