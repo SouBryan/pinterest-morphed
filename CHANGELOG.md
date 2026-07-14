@@ -1,3 +1,9 @@
+## [1.0.0-dev.6](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.5...v1.0.0-dev.6) (2026-07-14)
+
+### ✨ New Features
+
+* **compat:** support Pinterest 14.20.0-14.27.0 as stable ([159ace4](https://github.com/SouBryan/pinterest-morphed/commit/159ace43b72515b14b3ec15eb206e43385bfdfa8))
+
 ## [1.0.0-dev.5](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.4...v1.0.0-dev.5) (2026-07-14)
 
 ### ✨ New Features
