@@ -6,114 +6,255 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.soubryan.patches.pinterest.shared.Constants.COMPATIBILITY_PINTEREST
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.ClassDef
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
 
 /**
- * Predicate that returns `true` when a class has any field carrying a Gson
- * `@SerializedName(<jsonName>)` annotation.
+ * Every Pinterest API model that describes a pin/story carries multiple
+ * booleans that flag it as advertising material in different ways. If
+ * *any* of them is truthy, the client renders the "Promoted"/"Shop now"
+ * chrome, fires impression beacons and treats taps as click-outs.
  *
- * The Gson annotation class itself (`com.google.gson.annotations.SerializedName`)
- * is mangled by R8 — on 14.25 it lands as `Ldp/b;`, on 14.26 it may land
- * somewhere else. Instead of hard-coding the mangled class, we look at the
- * annotation's `value` element (Gson reads it via reflection, so its name
- * `"value"` is preserved) and match on the string constant. That makes the
- * predicate immune to further R8 re-shuffles.
+ * Setting `is_promoted = false` alone is not enough — Pinterest shopping
+ * ads (the "Comprar agora" carousels on the home feed) often have
+ * `is_promoted = false` but `promoted_is_catalog_carousel_ad = true` or
+ * `is_native_content = true` or a non-null `ad_data`.
+ *
+ * The set below covers every boolean flag on `Pin`/`Story` models whose
+ * name unambiguously means "this pin *is* an ad". Fields that only
+ * *enable* an ad-adjacent capability (e.g.
+ * `is_eligible_for_promoted_partnership`, `promoted_is_sideswipe_disabled`)
+ * are deliberately excluded — they don't determine whether the pin
+ * itself is treated as promoted.
  */
-private fun classHasSerializedFieldNamed(jsonName: String): (Any, com.android.tools.smali.dexlib2.iface.ClassDef) -> Boolean =
-    { _, classDef ->
-        classDef.fields.any { field ->
-            field.annotations.any { anno ->
-                anno.elements.any { element ->
-                    element.name == "value" &&
-                        (element.value as? StringEncodedValue)?.value == jsonName
+private val AD_INDICATOR_JSON_NAMES = setOf(
+    "is_promoted",
+    "is_downstream_promotion",
+    "is_native",
+    "is_native_content",
+    "is_eligible_for_in_content_ads",
+    "promoted_is_auto_assembled",
+    "promoted_is_catalog_carousel_ad",
+    "promoted_is_congruency_enabled",
+    "promoted_is_lead_ad",
+    "promoted_is_max_video",
+    "promoted_is_opaque_onetap_enabled",
+    "promoted_is_personalized",
+    "promoted_is_quiz",
+    "promoted_is_showcase",
+)
+
+/**
+ * Reads the `value = "..."` element off any Gson `@SerializedName`
+ * annotation on `field`. Returns `null` if the field has no
+ * `SerializedName`.
+ *
+ * The Gson annotation class itself is mangled by R8 (`Ldp/b;` on 14.25,
+ * possibly something else on future builds), so we detect the annotation
+ * by its `value` element instead of by class name.
+ */
+private fun serializedFieldNameOf(
+    field: com.android.tools.smali.dexlib2.iface.Field,
+): String? {
+    for (anno in field.annotations) {
+        for (element in anno.elements) {
+            if (element.name == "value") {
+                val value = element.value
+                if (value is StringEncodedValue) {
+                    return value.value
                 }
             }
         }
     }
+    return null
+}
 
 /**
- * Matches trivial boolean getters (`iget-boolean` immediately followed by
- * `return`) on any class that carries a field annotated with any Gson
- * `@SerializedName("is_promoted")`.
- *
- * The fingerprint intentionally does NOT nail down the method name — R8
- * mangles every getter in the Pinterest API models to a single letter and
- * the mapping changes between builds. Instead we rely on:
- *
- *   * exact bytecode shape (2 opcodes only, no branching)
- *   * exact signature (`public final boolean noArgs()`)
- *   * exact class shape (has an `@SerializedName("is_promoted")` field,
- *     detected structurally without depending on the mangled annotation
- *     class name)
- *
- * That combination uniquely identifies the `getIsPromoted()` getter on
- * every Pinterest model that ships an `is_promoted` field (`ue`, `x5`,
- * `qj`, `o7`, ...).
+ * Shared "the getter's `iget` targets an ad-indicator field whose
+ * `SerializedName` is in [AD_INDICATOR_JSON_NAMES] and whose field type
+ * matches `expectedFieldType`" check.
  */
-internal object IsPromotedGetterFingerprint : Fingerprint(
+private fun ClassDef.matchesAdBooleanGetter(
+    instructions: List<com.android.tools.smali.dexlib2.iface.instruction.Instruction>,
+    expectedFieldType: String,
+): Boolean {
+    val get = instructions[0] as? ReferenceInstruction ?: return false
+    val field = get.reference as? FieldReference ?: return false
+
+    // The getter must access a field on its own owning class — otherwise
+    // it's likely a synthetic accessor or a delegate, not a plain getter.
+    if (field.definingClass != this.type) return false
+    if (field.type != expectedFieldType) return false
+
+    val classField = this.fields.firstOrNull { it.name == field.name } ?: return false
+    return serializedFieldNameOf(classField) in AD_INDICATOR_JSON_NAMES
+}
+
+/**
+ * Matches a trivial 2-opcode getter whose body is:
+ *
+ *   `iget-boolean <r>, p0, <owner>-><boolField>:Z`
+ *   `return <r>`
+ *
+ * on any owner class that has *this exact* field annotated with a Gson
+ * `@SerializedName` whose value is in [AD_INDICATOR_JSON_NAMES]. Only
+ * primitive `boolean` (bytecode type `Z`) fields are considered — the
+ * boxed [BoxedBooleanAdFlagGetterFingerprint] handles `Boolean` fields.
+ */
+internal object PrimitiveBooleanAdFlagGetterFingerprint : Fingerprint(
     returnType = "Z",
     parameters = emptyList(),
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
     custom = { method, classDef ->
-        // Must be exactly the "return this.field" bytecode shape.
         val instructions = method.implementation?.instructions?.toList()
-        val shapeMatches = instructions?.size == 2 &&
+        val bodyMatches = instructions?.size == 2 &&
             instructions[0].opcode == Opcode.IGET_BOOLEAN &&
-            (instructions[1].opcode == Opcode.RETURN ||
-                instructions[1].opcode == Opcode.RETURN_WIDE)
-
-        shapeMatches && classHasSerializedFieldNamed("is_promoted")(method, classDef)
+            instructions[1].opcode == Opcode.RETURN
+        bodyMatches && classDef.matchesAdBooleanGetter(instructions!!, "Z")
     },
 )
 
 /**
- * Hides promoted pins throughout the app by neutralising every
- * `boolean isPromoted` getter on every Pinterest API model that ships an
- * `is_promoted` JSON field.
+ * Boxed-`Boolean` counterpart of [PrimitiveBooleanAdFlagGetterFingerprint].
  *
- * The Pinterest client marks a pin/story as an ad via `Pin.getIsPromoted()`
- * (mangled to `p()` or a single letter). Downstream code branches on this
- * boolean to:
+ * Matches:
  *
- *   * render the "Promoted" badge and click-out CTA
- *   * fire ad-impression tracking beacons
- *   * insert the pin into ad slots inside the home feed and search results
+ *   `iget-object <r>, p0, <owner>-><boxedField>:Ljava/lang/Boolean;`
+ *   `return-object <r>`
  *
- * Forcing every such getter to return `false` makes every rendered pin look
- * organic to the rest of the app, so no ad chrome is drawn, no ad beacons
- * are sent, and no click-out flow is triggered.
+ * where the accessed field is one of [AD_INDICATOR_JSON_NAMES] on the
+ * owner class. Most `promoted_is_*` fields on the Pin model are declared
+ * as boxed `Boolean` (Gson deserializes JSON `true`/`false`/`null` into
+ * `Boolean.TRUE`/`FALSE`/`null`, so a boxed reference is required to
+ * preserve the tri-state).
+ */
+internal object BoxedBooleanAdFlagGetterFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Boolean;",
+    parameters = emptyList(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    custom = { method, classDef ->
+        val instructions = method.implementation?.instructions?.toList()
+        val bodyMatches = instructions?.size == 2 &&
+            instructions[0].opcode == Opcode.IGET_OBJECT &&
+            instructions[1].opcode == Opcode.RETURN_OBJECT
+        bodyMatches &&
+            classDef.matchesAdBooleanGetter(instructions!!, "Ljava/lang/Boolean;")
+    },
+)
+
+/**
+ * Matches a trivial 2-opcode getter of a non-boolean object field whose
+ * `@SerializedName("ad_data")` marks it as the pin's ad payload:
  *
- * The pins themselves still appear in the feed (we don't strip them out of
- * the underlying list), but they behave as regular content. A future patch
- * can also filter them out of the feed-loader response for a truly zero-ad
- * feed.
+ *   `iget-object <r>, p0, Lue;->d:Lcom/pinterest/api/model/e;`
+ *   `return-object <r>`
+ *
+ * Downstream code branches on `pin.getAdData() != null` to decide
+ * whether the pin is treated as an ad even when every boolean flag is
+ * false. Forcing this getter to return `null` closes that last hole.
+ */
+internal object AdDataGetterFingerprint : Fingerprint(
+    parameters = emptyList(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    custom = { method, classDef ->
+        val returnType = method.returnType
+        val isReferenceReturn = returnType.startsWith("L") && returnType.endsWith(";")
+        val instructions = method.implementation?.instructions?.toList()
+        val bodyMatches = isReferenceReturn &&
+            instructions?.size == 2 &&
+            instructions[0].opcode == Opcode.IGET_OBJECT &&
+            instructions[1].opcode == Opcode.RETURN_OBJECT
+        if (!bodyMatches) {
+            false
+        } else {
+            val get = instructions!![0] as? ReferenceInstruction
+            val field = get?.reference as? FieldReference
+            val matchesAdData = field != null &&
+                field.definingClass == classDef.type &&
+                field.type == returnType &&
+                classDef.fields.firstOrNull { it.name == field.name }
+                    ?.let { serializedFieldNameOf(it) == "ad_data" } == true
+            matchesAdData
+        }
+    },
+)
+
+/**
+ * Hides every kind of ad the Pinterest client can render — Promoted Pins,
+ * catalog-carousel shopping ads ("Comprar agora"), native content ads,
+ * downstream promotions, in-content ads, quiz ads, showcase ads, video
+ * lead ads.
+ *
+ * The Pinterest `Pin`/`Story` models flag ads via ~14 booleans and one
+ * non-null `ad_data` object. Downstream code branches on any of them to:
+ *
+ *   * render the "Promoted"/"Shop now"/"Comprar agora" chrome
+ *   * insert the pin into an ad slot in the home feed or search results
+ *   * fire impression / click-out tracking beacons
+ *   * open the advertiser deep-link instead of the normal pin closeup
+ *
+ * This patch rewrites every trivial getter (`iget + return`) that reads
+ * one of those ad-indicator fields:
+ *
+ *   * primitive `boolean` getters → return `false`
+ *   * boxed `Boolean` getters → return `Boolean.FALSE`
+ *   * `ad_data` object getter → return `null`
+ *
+ * The class holding the field is identified structurally by its Gson
+ * `@SerializedName("<jsonName>")` annotation, so the patch survives R8
+ * remangling class and method names (`Ldp/b;`, `Ljx2/v;`, etc). The
+ * accessed field is identified by its `SerializedName` too, so we never
+ * touch non-ad boolean getters like `is_favorited` or `is_muted`.
  */
 @Suppress("unused")
 val hidePromotedPinsPatch = bytecodePatch(
     name = "Hide promoted pins",
-    description = "Overrides every `isPromoted` getter on the Pinterest pin/story models to return false, so ad chrome, ad beacons and click-out CTAs are never rendered or fired.",
+    description = "Neutralises every ad-indicator field on the Pinterest pin/story models (is_promoted, promoted_is_*, is_native, ad_data, ...) so Promoted Pins, shopping-carousel ads, native-content ads and click-out CTAs are never rendered or fired.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_PINTEREST)
 
     execute {
-        // matchAll() lets us patch every model class that has an is_promoted
-        // field, not just the first one matched.
-        val matches = IsPromotedGetterFingerprint.matchAll()
+        var patched = 0
 
-        if (matches.isEmpty()) {
-            throw app.morphe.patcher.patch.PatchException(
-                "No isPromoted getters matched — the Pinterest API model shape may have changed.",
-            )
-        }
-
-        matches.forEach { match ->
+        PrimitiveBooleanAdFlagGetterFingerprint.matchAll().forEach { match ->
             match.method.addInstructions(
                 0,
                 """
                     const/4 v0, 0x0
                     return v0
                 """,
+            )
+            patched++
+        }
+
+        BoxedBooleanAdFlagGetterFingerprint.matchAll().forEach { match ->
+            match.method.addInstructions(
+                0,
+                """
+                    sget-object v0, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+                    return-object v0
+                """,
+            )
+            patched++
+        }
+
+        AdDataGetterFingerprint.matchAll().forEach { match ->
+            match.method.addInstructions(
+                0,
+                """
+                    const/4 v0, 0x0
+                    return-object v0
+                """,
+            )
+            patched++
+        }
+
+        if (patched == 0) {
+            throw app.morphe.patcher.patch.PatchException(
+                "No ad-indicator getters matched — the Pinterest API model shape may have changed.",
             )
         }
     }
