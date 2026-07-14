@@ -1,3 +1,9 @@
+## [1.0.0-dev.3](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2026-07-14)
+
+### ✨ New Features
+
+* resolve pin.it and pinterest.com/url_shortener short links to canonical pin URLs, and sanitize clipboard ([fc25383](https://github.com/SouBryan/pinterest-morphed/commit/fc25383cfbf4888a596fffa7fb6484b927f830eb))
+
 ## [1.0.0-dev.2](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-07-07)
 
 ### ✨ New Features
