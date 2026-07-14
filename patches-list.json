@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.0-dev.6",
+  "version": "1.0.0-dev.7",
   "patches": [
     {
       "name": "Disable Android Privacy Sandbox Ad Services",
@@ -14,7 +14,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -129,7 +131,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -244,7 +248,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -359,7 +365,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -474,7 +482,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -589,7 +599,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -704,7 +716,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -819,7 +833,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -934,7 +950,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -1049,7 +1067,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -1164,7 +1184,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",
@@ -1279,7 +1301,9 @@
           "description": null,
           "apkFileType": "APKM",
           "appIconColor": "#E60023",
-          "signatures": null,
+          "signatures": [
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa"
+          ],
           "targets": [
             {
               "version": "14.27.0",

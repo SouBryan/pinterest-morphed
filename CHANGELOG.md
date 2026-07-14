@@ -1,3 +1,9 @@
+## [1.0.0-dev.7](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.6...v1.0.0-dev.7) (2026-07-14)
+
+### ✨ New Features
+
+* **safety:** pin Pinterest signing certificate SHA-256 ([2576aea](https://github.com/SouBryan/pinterest-morphed/commit/2576aeac40436416593dcc1c4a32ccfcdbc2ef84))
+
 ## [1.0.0-dev.6](https://github.com/SouBryan/pinterest-morphed/compare/v1.0.0-dev.5...v1.0.0-dev.6) (2026-07-14)
 
 ### ✨ New Features
