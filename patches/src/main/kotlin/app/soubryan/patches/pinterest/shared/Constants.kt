@@ -30,6 +30,19 @@ internal object Constants {
         apkFileType = ApkFileType.APKM,
         // Pinterest brand red (Play Store / launcher icon background).
         appIconColor = 0xE60023,
+        // SHA-256 fingerprint of the certificate the Pinterest Play Store build
+        // is signed with (Signer #1: CN=Carl Rice, O=Pinterest Inc, Palo Alto,
+        // CA). The patcher refuses to touch APKs whose signature does not match
+        // — this is a supply-chain safeguard: the user cannot accidentally (or
+        // maliciously) apply these patches to a repackaged "pinterest.apk"
+        // downloaded from a third-party site that could contain malware.
+        //
+        // Only the Pinterest team can produce an APK with this signature.
+        // Verified with `apksigner verify --print-certs base.apk` on every
+        // release listed below (14.20.0 → 14.27.0).
+        signatures = setOf(
+            "341d6881b1ecf38361fbf8c8fbae0aa516b45375c39ef5e78b161869acc1bcfa",
+        ),
         targets = listOf(
             AppTarget(
                 version = "14.27.0",
