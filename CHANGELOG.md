@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/SouBryan/pinterest-morphed/compare/v1.2.1...v1.3.0) (2026-07-14)
+
+### ✨ New Features
+
+* add HideAdViewsPatch — collapse ad-specific views to GONE ([064d99c](https://github.com/SouBryan/pinterest-morphed/commit/064d99ccb5cbcd7b70955f7b6de0b2d298b83163))
+
 ## [1.2.1](https://github.com/SouBryan/pinterest-morphed/compare/v1.2.0...v1.2.1) (2026-07-14)
 
 ### 🐛 Bug Fixes
