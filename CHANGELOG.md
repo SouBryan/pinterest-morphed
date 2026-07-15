@@ -1,3 +1,13 @@
+## [1.6.0](https://github.com/SouBryan/pinterest-morphed/compare/v1.5.0...v1.6.0) (2026-07-15)
+
+### 🐛 Bug Fixes
+
+* **ads:** cover third-party, sponsored and promoted-variant flags on first-boot feed ([89e0dec](https://github.com/SouBryan/pinterest-morphed/commit/89e0decc797b53b216f176829d162b48da1b7c7f))
+
+### ✨ New Features
+
+* **tracking:** add DisableFirebaseServicesPatch to flip 5 Firebase auto-init flags ([e536843](https://github.com/SouBryan/pinterest-morphed/commit/e5368437da1accfe06ea8aae4e0b616387f56c29))
+
 ## [1.5.0](https://github.com/SouBryan/pinterest-morphed/compare/v1.4.0...v1.5.0) (2026-07-14)
 
 ### ✨ New Features
