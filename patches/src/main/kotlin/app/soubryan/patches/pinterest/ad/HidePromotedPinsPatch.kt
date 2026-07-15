@@ -30,11 +30,29 @@ import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
  * itself is treated as promoted.
  */
 private val AD_INDICATOR_JSON_NAMES = setOf(
+    // Core promoted-pin flags (Pin model).
     "is_promoted",
+    "is_promoted_pin",
+    "is_promoted_carousel_pin",
+    "is_promoted_video",
     "is_downstream_promotion",
+    // Sponsored-content flags (partnership / brand content).
+    "is_sponsored",
+    "is_sponsored_content",
+    // Third-party demand / Dynamic Product Ads (Natura, Mercado Livre, etc).
+    "is_third_party_ad",
+    // Native / in-content ad slots.
     "is_native",
     "is_native_content",
     "is_eligible_for_in_content_ads",
+    // Ad closeup / detail-page renderers.
+    "is_ad_closeup_rp",
+    "is_ad_closeup_ui",
+    // Ad-only board and user profile flags (partner accounts).
+    "is_ads_only",
+    "is_ads_only_profile",
+    // `promoted_is_*` family — every one of these means the pin should
+    // be rendered as some flavour of promoted content.
     "promoted_is_auto_assembled",
     "promoted_is_catalog_carousel_ad",
     "promoted_is_congruency_enabled",
